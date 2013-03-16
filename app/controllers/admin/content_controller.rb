@@ -36,7 +36,44 @@ class Admin::ContentController < Admin::BaseController
     end
     new_or_edit
   end
+  
+  def merge
+    @current_article = Article.find(params[:current_id])
+    @merge_article = Article.find(params[:merge_with])
+    unless @current_article.access_by? current_user 
+      redirect_to :action => 'index'
+      flash[:error] = _("Error, you are not allowed to perform this action")
+      return
+    end
+	
+	@merge_article[:body]<<@current_article[:body]
+	@merge_article[:title]<<"Merge"
+	@merge_article[:extended].to_s<<@current_article[:extended].to_s
+	debugger
+	@article=Article.new
+	@article=@merge_article
+	@article.id=nil
+	debugger
+	#redirect_to :action => 'index'
+	
+	#id = @article.id
+	#params[:article][:id]="Merge"
+    
 
+	 
+    if @article.save
+	  debugger
+      #destroy_the_draft unless @article.draft
+      set_article_categories
+      set_the_flash
+	  @article.id = Article.find_by_title(@article.title)
+      redirect_to :action => 'new'
+      return
+    end
+	
+	#new_or_edit
+  end
+  
   def destroy
     @record = Article.find(params[:id])
 
@@ -140,26 +177,34 @@ class Admin::ContentController < Admin::BaseController
   def real_action_for(action); { 'add' => :<<, 'remove' => :delete}[action]; end
 
   def new_or_edit
+    
     id = params[:id]
     id = params[:article][:id] if params[:article] && params[:article][:id]
     @article = Article.get_or_build_article(id)
     @article.text_filter = current_user.text_filter if current_user.simple_editor?
 
     @post_types = PostType.find(:all)
+	
     if request.post?
-      if params[:article][:draft]
+	debugger
+      if params[:action]=="merge" or params[:article][:draft]
         get_fresh_or_existing_draft_for_article
       else
         if not @article.parent_id.nil?
+		  
           @article = Article.find(@article.parent_id)
         end
       end
     end
-
+    if params[:action]=="merge" 
+	   @article=@merge_article
+	   @article.id=nil
+	   debugger
+	end
     @article.keywords = Tag.collection_to_string @article.tags
-    @article.attributes = params[:article]
+    @article.attributes = params[:article] unless params[:action]=="merge"
     # TODO: Consider refactoring, because double rescue looks... weird.
-        
+       
     @article.published_at = DateTime.strptime(params[:article][:published_at], "%B %e, %Y %I:%M %p GMT%z").utc rescue Time.parse(params[:article][:published_at]).utc rescue nil
 
     if request.post?
@@ -167,8 +212,9 @@ class Admin::ContentController < Admin::BaseController
       save_attachments
       
       @article.state = "draft" if @article.draft
-
+      
       if @article.save
+	    debugger
         destroy_the_draft unless @article.draft
         set_article_categories
         set_the_flash
@@ -176,10 +222,11 @@ class Admin::ContentController < Admin::BaseController
         return
       end
     end
-
+    
     @images = Resource.images_by_created_at.page(params[:page]).per(10)
     @resources = Resource.without_images_by_filename
     @macros = TextFilter.macro_filters
+	
     render 'new'
   end
 
@@ -189,6 +236,8 @@ class Admin::ContentController < Admin::BaseController
       flash[:notice] = _('Article was successfully created')
     when 'edit'
       flash[:notice] = _('Article was successfully updated.')
+	when 'merge'
+      flash[:notice] = _("Articles have been successfully merged")
     else
       raise "I don't know how to tidy up action: #{params[:action]}"
     end

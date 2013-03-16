@@ -31,6 +31,13 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
+Given /the following articles exist/ do |articles_table|
+  articles_table.hashes.each do |article|
+    # each returned element will be a hash whose key is the table header.
+    Article.create!(article)
+    # you should arrange to add that movie to the database here.
+  end
+end
 Given /^the blog is set up$/ do
   Blog.default.update_attributes!({:blog_name => 'Teh Blag',
                                    :base_url => 'http://localhost:3000'});
@@ -87,6 +94,9 @@ end
 
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
   fill_in(field, :with => value)
+end
+Then /^I should see the merge_button$/ do
+  pending # express the regexp above with the code you wish you had
 end
 
 # Use this to fill in an entire form with data from a table. Example:

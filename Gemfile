@@ -23,7 +23,7 @@ group :production do
   gem 'pg'
 end
 
-source :rubygems
+source 'https://rubygems.org' 
 
 gem 'thin'
 gem 'rails', '~> 3.0.10'
@@ -39,7 +39,7 @@ gem 'mini_magick', '~> 1.3.3', :require => 'mini_magick'
 gem 'uuidtools', '~> 2.1.1'
 gem 'flickraw-cached'
 gem 'rubypants', '~> 0.2.0'
-gem 'rake', '~> 0.9.2'
+gem 'rake', '~> 0.8.7'
 gem 'acts_as_list'
 gem 'acts_as_tree_rails3'
 gem 'recaptcha', :require => 'recaptcha/rails', :branch => 'rails3'
