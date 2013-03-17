@@ -1,6 +1,6 @@
 <%= form_tag({:controller => "admin/content", :action => "merge"}) do %>
   <div class="">
-    <h4><%= _("Merge articles") %></h4>
+    <h4><%= _("Merge Articles") %></h4>
     <%= hidden_field_tag :current_id, @article.id %>
     <%= label_tag :merge_with, 'Article ID', :style => "text-align: left" %>
     <%= text_field_tag(:merge_with)%>
