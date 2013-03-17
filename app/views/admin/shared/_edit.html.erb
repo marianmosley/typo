@@ -3,6 +3,9 @@
 
   <%= render :partial => "form" %>
   <%= _("This is article #{@article.id}") %>
-  
+  <%= _("Action #{params.inspect}") %>
 <% end %>
-<%= render :partial => "merge" %>
+
+<% if params[:action] == "edit" %>
+   <%= render :partial => "merge" %>
+<% end %>

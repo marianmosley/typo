@@ -29,6 +29,7 @@ class Admin::ContentController < Admin::BaseController
 
   def edit
     @article = Article.find(params[:id])
+	debugger
     unless @article.access_by? current_user
       redirect_to :action => 'index'
       flash[:error] = _("Error, you are not allowed to perform this action")
@@ -38,22 +39,28 @@ class Admin::ContentController < Admin::BaseController
   end
   
   def merge
+  debugger
     @current_article = Article.find(params[:current_id])
-    @merge_article = Article.find(params[:merge_with])
+    @merge_article = Article.find_by_title(params[:merge_with])
     unless @current_article.access_by? current_user 
       redirect_to :action => 'index'
       flash[:error] = _("Error, you are not allowed to perform this action")
       return
     end
 	
-	@merge_article[:body]<<@current_article[:body]
-	@merge_article[:title]<<"Merge"
-	@merge_article[:extended].to_s<<@current_article[:extended].to_s
+	#@merge_article[:body]<<@current_article[:body]
+	#@merge_article[:title]<<"Merge"
+	#@merge_article[:extended].to_s<<@current_article[:extended].to_s
 	debugger
 	@article=Article.new
-	@article=@merge_article
-	@article.id=nil
-	debugger
+	@article.body=@current_article.body + @merge_article.body
+	@article.extended=@current_article.extended + @merge_article.extended
+	@article.title=@current_article.title + "Merge"
+	@article.state="published"
+	
+	#@article=@merge_article
+	#@article.id=nil
+	
 	#redirect_to :action => 'index'
 	
 	#id = @article.id
@@ -66,8 +73,8 @@ class Admin::ContentController < Admin::BaseController
       #destroy_the_draft unless @article.draft
       set_article_categories
       set_the_flash
-	  @article.id = Article.find_by_title(@article.title)
-      redirect_to :action => 'new'
+	  id = Article.find_by_title(@article.title).id
+      redirect_to :action => 'edit', :id  => id
       return
     end
 	
