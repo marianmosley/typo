@@ -51,7 +51,7 @@ class Admin::ContentController < Admin::BaseController
 	@article=Article.new
 	@article.body=@current_article.body.to_s + @merge_article.body.to_s
 	@article.extended=@current_article.extended.to_s + @merge_article.extended.to_s
-	@article.title=@current_article.title
+	@article.title=@current_article.title + " Merge"
 	@article.state="published"
 
 	 
@@ -60,21 +60,10 @@ class Admin::ContentController < Admin::BaseController
       set_article_categories
       set_the_flash
 	  id = Article.find_by_title(@article.title).id
+	  @current_article.destroy
+	  @merged_article.destroy
       redirect_to :action => 'edit', :id  => id
-	  @record_merge = Article.find(@merge_article.id)
-      @record_current = Article.find(@current_article.id)
-	  debugger
-      unless @record_merge.access_by?(current_user)
-        flash[:error] = _("Error, you are not allowed to perform this action")
-        return(redirect_to :action => 'index')
-      end
-      unless @record_current.access_by?(current_user)
-        flash[:error] = _("Error, you are not allowed to perform this action")
-        return(redirect_to :action => 'index')
-      end
-      debugger  
-      @record_merge.destroy
-	  @record_current.destroy
+	  
       return
     end
 	
