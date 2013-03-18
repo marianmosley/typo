@@ -51,17 +51,18 @@ class Admin::ContentController < Admin::BaseController
 	@article=Article.new
 	@article.body=@current_article.body.to_s + @merge_article.body.to_s
 	@article.extended=@current_article.extended.to_s + @merge_article.extended.to_s
-	@article.title=@current_article.title + " Merge"
+	@article.title=@current_article.title
 	@article.state="published"
 
 	 
     if @article.save
+	  debugger
       #destroy_the_draft unless @article.draft
       set_article_categories
       set_the_flash
 	  id = Article.find_by_title(@article.title).id
 	  @current_article.destroy
-	  @merged_article.destroy
+	  @merge_article.destroy
       redirect_to :action => 'edit', :id  => id
 	  
       return
