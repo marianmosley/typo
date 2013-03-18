@@ -6,6 +6,6 @@
   <%= _("Action #{params.inspect}") %>
 <% end %>
 
-<% if params[:action] == "edit" %>
+<% if params[:action] == "edit" and current_user.profile.label == 'admin'%>
    <%= render :partial => "merge" %>
 <% end %>
