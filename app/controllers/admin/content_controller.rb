@@ -47,7 +47,11 @@ class Admin::ContentController < Admin::BaseController
       flash[:error] = _("Error, you are not allowed to perform this action")
       return
     end
-
+    if current_user.profile.label != 'admin'
+	  redirect_to :action => 'index'
+      flash[:error] = _("Error, you are not allowed to perform this action")
+      return
+    end
 	@article=Article.new
 	@article.body=@current_article.body.to_s + @merge_article.body.to_s
 	@article.extended=@current_article.extended.to_s + @merge_article.extended.to_s
