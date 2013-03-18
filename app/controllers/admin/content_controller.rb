@@ -53,8 +53,8 @@ class Admin::ContentController < Admin::BaseController
 	#@merge_article[:extended].to_s<<@current_article[:extended].to_s
 	debugger
 	@article=Article.new
-	@article.body=@current_article.body + @merge_article.body
-	@article.extended=@current_article.extended + @merge_article.extended
+	@article.body=@current_article.body.to_s + @merge_article.body.to_s
+	@article.extended=@current_article.extended.to_s + @merge_article.extended.to_s
 	@article.title=@current_article.title + "Merge"
 	@article.state="published"
 	

@@ -16,11 +16,9 @@ Then I should see "article 1"
 And show me the page
 When I follow "article 1"
 #Then show me the page
-Then I should see "Merge articles"
+Then I should see "Merge Articles"
 When I fill in "Article ID" with "article 2"
 And I press "Merge"
-Then I should not see "article 2"
-When I follow "article 1"
 Then I should see "text 1"
 And I should see "text 2"
 When I follow "New Article"
