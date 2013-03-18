@@ -51,7 +51,7 @@ class Admin::ContentController < Admin::BaseController
 	@article=Article.new
 	@article.body=@current_article.body.to_s + @merge_article.body.to_s
 	@article.extended=@current_article.extended.to_s + @merge_article.extended.to_s
-	@article.title=@current_article.title + " Merge"
+	@article.title=@current_article.title
 	@article.state="published"
 
 	 
