@@ -29,7 +29,7 @@ class Admin::ContentController < Admin::BaseController
 
   def edit
     @article = Article.find(params[:id])
-	debugger
+	
     unless @article.access_by? current_user
       redirect_to :action => 'index'
       flash[:error] = _("Error, you are not allowed to perform this action")
@@ -39,7 +39,7 @@ class Admin::ContentController < Admin::BaseController
   end
   
   def merge
-  debugger
+  
     @current_article = Article.find(params[:current_id])
     @merge_article = Article.find_by_title(params[:merge_with])
     unless @current_article.access_by? current_user 
@@ -47,34 +47,34 @@ class Admin::ContentController < Admin::BaseController
       flash[:error] = _("Error, you are not allowed to perform this action")
       return
     end
-	
-	#@merge_article[:body]<<@current_article[:body]
-	#@merge_article[:title]<<"Merge"
-	#@merge_article[:extended].to_s<<@current_article[:extended].to_s
-	debugger
+
 	@article=Article.new
 	@article.body=@current_article.body.to_s + @merge_article.body.to_s
 	@article.extended=@current_article.extended.to_s + @merge_article.extended.to_s
-	@article.title=@current_article.title + "Merge"
+	@article.title=@current_article.title + " Merge"
 	@article.state="published"
-	
-	#@article=@merge_article
-	#@article.id=nil
-	
-	#redirect_to :action => 'index'
-	
-	#id = @article.id
-	#params[:article][:id]="Merge"
-    
 
 	 
     if @article.save
-	  debugger
       #destroy_the_draft unless @article.draft
       set_article_categories
       set_the_flash
 	  id = Article.find_by_title(@article.title).id
       redirect_to :action => 'edit', :id  => id
+	  @record_merge = Article.find(@merge_article.id)
+      @record_current = Article.find(@current_article.id)
+	  debugger
+      unless @record_merge.access_by?(current_user)
+        flash[:error] = _("Error, you are not allowed to perform this action")
+        return(redirect_to :action => 'index')
+      end
+      unless @record_current.access_by?(current_user)
+        flash[:error] = _("Error, you are not allowed to perform this action")
+        return(redirect_to :action => 'index')
+      end
+      debugger  
+      @record_merge.destroy
+	  @record_current.destroy
       return
     end
 	
