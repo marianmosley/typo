@@ -56,13 +56,15 @@ class Admin::ContentController < Admin::BaseController
 
 	 
     if @article.save
-	  debugger
+	  
       #destroy_the_draft unless @article.draft
       set_article_categories
       set_the_flash
-	  id = Article.find_by_title(@article.title).id
+	  
 	  @current_article.destroy
 	  @merge_article.destroy
+	  id = Article.find_by_title(@article.title).id
+	  debugger
       redirect_to :action => 'edit', :id  => id
 	  
       return
